@@ -104,7 +104,7 @@ rag-chatbot/
 └── README.md
 ```
 
-## What this demonstrates (for interviews / resume)
+## What this demonstrates 
 
 - Document chunking and preprocessing for LLM pipelines
 - Local embedding generation with `sentence-transformers`
