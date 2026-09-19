@@ -71,6 +71,26 @@ Sources: resume.pdf (chunk 2), resume.pdf (chunk 4)
 Ask a question (or 'quit'): quit
 ```
 
+## Web UI (Streamlit)
+
+For a browser-based chat interface with conversation memory (follow-up
+questions like "what about his earlier role?" work correctly) instead of
+the command-line loop, run:
+
+```bash
+streamlit run streamlit_app.py
+```
+
+This opens a local web page where you can:
+- Upload PDF/TXT documents directly (no need to copy files manually)
+- Rebuild the search index with one click
+- Chat with multi-turn memory — previous questions and answers are sent
+  back to Claude as context for follow-ups
+- See which source chunks backed each answer
+
+Enter your Anthropic API key in the sidebar (or set `ANTHROPIC_API_KEY`
+as an environment variable beforehand and it will be pre-filled).
+
 ## Project structure
 
 ```
@@ -78,7 +98,8 @@ rag-chatbot/
 ├── documents/          # put your PDFs/TXTs here
 ├── output_index/       # generated FAISS index + chunk metadata (gitignored)
 ├── ingest.py           # builds the vector index from documents/
-├── chatbot.py          # interactive Q&A loop
+├── chatbot.py          # interactive CLI Q&A loop
+├── streamlit_app.py    # browser-based UI with conversation memory
 ├── requirements.txt
 └── README.md
 ```
@@ -89,11 +110,15 @@ rag-chatbot/
 - Local embedding generation with `sentence-transformers`
 - Vector similarity search with FAISS
 - Prompt construction for grounded (anti-hallucination) generation
-- Clean CLI application design
+- Multi-turn conversation design (chat history passed back to the model)
+- Both a clean CLI and a browser-based (Streamlit) application interface
 
 ## Possible extensions
 
 - Swap FAISS for a hosted vector DB (Pinecone, Chroma Cloud, Weaviate)
-- Add a web UI with Streamlit or Flask
-- Add conversation memory (multi-turn context)
-- Add source-highlighting / citations in the UI
+- Add source-highlighting / citations in the Streamlit UI
+- Stream the answer token-by-token instead of waiting for the full response
+- Deploy the Streamlit app (e.g. Streamlit Community Cloud) so it's reachable
+  from a shareable link, not just localhost
+- Add chunking strategies aware of document structure (headings, sections)
+  instead of fixed-size sliding windows
