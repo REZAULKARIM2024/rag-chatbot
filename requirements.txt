@@ -1,0 +1,5 @@
+anthropic>=0.34.0
+sentence-transformers>=3.0.0
+faiss-cpu>=1.8.0
+pypdf>=4.2.0
+numpy>=1.26.0

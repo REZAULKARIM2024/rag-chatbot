@@ -1,0 +1,10 @@
+This is a placeholder file. Replace this with your own documents!
+
+Add your resume, project notes, QA runbooks, or any .pdf / .txt files here,
+then run `python ingest.py` to build the search index, and `python chatbot.py`
+to start asking questions about them.
+
+Example questions once you add your resume:
+- "What automation frameworks does this candidate have experience with?"
+- "Summarize the candidate's most recent role."
+- "What databases has this person tested against?"
