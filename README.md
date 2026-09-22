@@ -120,6 +120,46 @@ This logic lives in `agent_graph.py` and reuses the same retrieval code
 as the plain chatbot (`chatbot.retrieve`, `chatbot.build_context`), so
 the two modes are directly comparable side by side.
 
+## Production-realistic vector store (PostgreSQL + pgvector)
+
+The local FAISS index is a single file on disk — fine for a demo, but not
+how a team would run this in production (no concurrent writers, no
+backups, can't be queried alongside other application data). `pg_store.py`
+adds a [pgvector](https://github.com/pgvector/pgvector)-backed alternative:
+the same chunks and embeddings, but stored in a real Postgres table.
+
+No local Postgres install needed — get a free instance with pgvector
+already available at [neon.tech](https://neon.tech) or
+[supabase.com](https://supabase.com), then:
+
+```bash
+set DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
+python pg_store.py --ingest
+python pg_store.py --query "your question here"   # quick CLI sanity check
+```
+
+In the Streamlit app, switch **"Vector store backend"** in the sidebar to
+**PostgreSQL (pgvector)**, paste the same connection string, and click
+**Rebuild index** — the chat interface works identically either way, so
+the two backends are directly comparable.
+
+```mermaid
+graph LR
+    subgraph "Local (FAISS)"
+    A1[documents/] --> B1[ingest.py] --> C1[(faiss_index.bin)]
+    end
+    subgraph "PostgreSQL (pgvector)"
+    A2[documents/] --> B2[pg_store.py --ingest] --> C2[(Postgres: document_chunks table)]
+    end
+    C1 --> D[chatbot.py / streamlit_app.py]
+    C2 --> D
+```
+
+Note: agentic mode (LangGraph, above) currently only supports the FAISS
+backend — extending it to pgvector is a natural next step since
+`pg_store.retrieve_pg()` already returns the same shape as
+`chatbot.retrieve()`.
+
 ## Project structure
 
 ```
@@ -130,6 +170,7 @@ rag-chatbot/
 ├── chatbot.py          # interactive CLI Q&A loop
 ├── streamlit_app.py    # browser-based UI with conversation memory
 ├── agent_graph.py      # LangGraph agentic flow with groundedness self-check
+├── pg_store.py         # PostgreSQL + pgvector backend (production-realistic alternative to FAISS)
 ├── requirements.txt
 └── README.md
 ```
@@ -145,6 +186,9 @@ rag-chatbot/
 - Agentic orchestration with LangGraph: conditional routing, retry loops,
   and a self-check (groundedness grading) step instead of blind trust in
   a single LLM call
+- A swappable vector store backend (local FAISS vs. PostgreSQL/pgvector)
+  behind the same retrieval interface — the kind of "make it real" step
+  most tutorials skip
 
 ## Possible extensions
 
