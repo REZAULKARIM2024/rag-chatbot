@@ -25,6 +25,7 @@ from anthropic import Anthropic
 import ingest
 import chatbot as chatbot_core
 import agent_graph
+import pg_store
 
 DOCS_DIR = Path(__file__).parent / "documents"
 MAX_HISTORY_TURNS = 6  # how many previous Q&A pairs to keep as context
@@ -113,11 +114,48 @@ with st.sidebar:
             for name in existing:
                 st.text(f"• {name}")
 
+    st.divider()
+
+    st.header("🗄️ Vector store backend")
+    backend = st.radio(
+        "Where chunks + embeddings are stored",
+        ["Local (FAISS)", "PostgreSQL (pgvector)"],
+        help=(
+            "Local (FAISS): a file on disk — simplest, good for a single-machine demo. "
+            "PostgreSQL (pgvector): a real database with concurrent access, backups, "
+            "and the ability to query alongside other app data — closer to how this "
+            "would be built in production."
+        ),
+    )
+
+    database_url_input = ""
+    if backend == "PostgreSQL (pgvector)":
+        database_url_input = st.text_input(
+            "DATABASE_URL",
+            type="password",
+            value=os.environ.get("DATABASE_URL", ""),
+            help=(
+                "Postgres connection string with pgvector enabled. Free hosted "
+                "options with no local install: neon.tech or supabase.com."
+            ),
+        )
+
     if st.button("🔄 Rebuild index", use_container_width=True):
-        with st.spinner("Building search index (first run downloads the embedding model)..."):
-            ingest.build_index()
-        st.session_state.index_loaded = False  # force reload on next question
-        st.success("Index rebuilt.")
+        if backend == "Local (FAISS)":
+            with st.spinner("Building FAISS index (first run downloads the embedding model)..."):
+                ingest.build_index()
+            st.session_state.index_loaded = False  # force reload on next question
+            st.success("FAISS index rebuilt.")
+        else:
+            if not database_url_input:
+                st.error("Enter a DATABASE_URL above first.")
+            else:
+                try:
+                    with st.spinner("Embedding chunks and writing to Postgres..."):
+                        count = pg_store.build_pg_index(database_url_input)
+                    st.success(f"Inserted {count} chunk(s) into Postgres.")
+                except Exception as e:
+                    st.error(f"Postgres error: {e}")
 
     st.divider()
 
@@ -137,15 +175,19 @@ with st.sidebar:
     agentic_mode = st.toggle(
         "🧠 Agentic mode (LangGraph)",
         value=False,
+        disabled=(backend == "PostgreSQL (pgvector)"),
         help=(
             "When on: after generating an answer, a second LLM call checks whether "
             "it's actually grounded in the retrieved context. If not, it retries "
             "retrieval once with a broadened query before falling back to an honest "
             "'not confident' answer instead of a possible hallucination. "
             "Note: agentic mode answers each question independently (no conversation "
-            "memory), so it can be compared apples-to-apples against plain RAG."
+            "memory), so it can be compared apples-to-apples against plain RAG. "
+            "Currently only supported with the Local (FAISS) backend."
         ),
     )
+    if backend == "PostgreSQL (pgvector)":
+        st.caption("ℹ️ Agentic mode currently supports the Local (FAISS) backend only.")
 
 
 # ---------------------------------------------------------------------------
@@ -155,10 +197,19 @@ with st.sidebar:
 st.title("💬 Personal RAG Chatbot")
 st.caption("Ask questions about your own documents — answers are grounded in retrieved context.")
 
-index, chunks, model = load_search_index()
+if backend == "Local (FAISS)":
+    index, chunks, model = load_search_index()
+    ready = index is not None
+else:
+    index, chunks = None, None
+    model = get_embedding_model_cached(ingest.EMBEDDING_MODEL)
+    ready = bool(database_url_input)
 
-if index is None:
-    st.info("No search index found yet. Add documents in the sidebar and click **Rebuild index**.")
+if not ready:
+    if backend == "Local (FAISS)":
+        st.info("No search index found yet. Add documents in the sidebar and click **Rebuild index**.")
+    else:
+        st.info("Enter a DATABASE_URL in the sidebar and click **Rebuild index** to populate Postgres.")
 else:
     for turn in st.session_state.chat_history:
         with st.chat_message(turn["role"]):
@@ -192,7 +243,15 @@ else:
                             st.text(step)
                 else:
                     with st.spinner("Thinking..."):
-                        results = chatbot_core.retrieve(question, index, chunks, model)
+                        if backend == "Local (FAISS)":
+                            results = chatbot_core.retrieve(question, index, chunks, model)
+                        else:
+                            try:
+                                results = pg_store.retrieve_pg(question, model, database_url=database_url_input)
+                            except Exception as e:
+                                st.error(f"Postgres error: {e}")
+                                results = []
+
                         if not results:
                             answer = "I couldn't find anything relevant to that in your documents."
                             sources = ""
