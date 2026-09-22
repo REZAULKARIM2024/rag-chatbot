@@ -24,6 +24,7 @@ from anthropic import Anthropic
 # `if __name__ == "__main__":` guard in each file prevents that).
 import ingest
 import chatbot as chatbot_core
+import agent_graph
 
 DOCS_DIR = Path(__file__).parent / "documents"
 MAX_HISTORY_TURNS = 6  # how many previous Q&A pairs to keep as context
@@ -131,6 +132,21 @@ with st.sidebar:
         st.session_state.chat_history = []
         st.rerun()
 
+    st.divider()
+
+    agentic_mode = st.toggle(
+        "🧠 Agentic mode (LangGraph)",
+        value=False,
+        help=(
+            "When on: after generating an answer, a second LLM call checks whether "
+            "it's actually grounded in the retrieved context. If not, it retries "
+            "retrieval once with a broadened query before falling back to an honest "
+            "'not confident' answer instead of a possible hallucination. "
+            "Note: agentic mode answers each question independently (no conversation "
+            "memory), so it can be compared apples-to-apples against plain RAG."
+        ),
+    )
+
 
 # ---------------------------------------------------------------------------
 # Main chat area
@@ -159,23 +175,39 @@ else:
             st.session_state.chat_history.append({"role": "user", "content": question})
 
             with st.chat_message("assistant"):
-                with st.spinner("Thinking..."):
-                    results = chatbot_core.retrieve(question, index, chunks, model)
-                    if not results:
-                        answer = "I couldn't find anything relevant to that in your documents."
-                        sources = ""
-                    else:
-                        context = chatbot_core.build_context(results)
-                        client = Anthropic(api_key=api_key_input)
-                        answer = ask_claude_with_history(
-                            client, question, context, st.session_state.chat_history
-                        )
-                        sources = ", ".join(
-                            sorted({f"{r['source']} (chunk {r['chunk_id']})" for r in results})
-                        )
+                if agentic_mode:
+                    with st.spinner("Retrieving, generating, and self-checking groundedness..."):
+                        graph = agent_graph.build_graph(index, chunks, model, api_key_input)
+                        result = agent_graph.run_agentic_query(graph, question)
+                        answer = result["answer"]
+                        sources = result["sources"]
 
                     st.markdown(answer)
                     if sources:
                         st.caption(f"📄 Sources: {sources}")
+                    badge = "✅ Grounded" if result["grounded"] else "⚠️ Not fully grounded"
+                    st.caption(f"{badge} · {result['retries']} retry(ies)")
+                    with st.expander("🔍 Agent trace"):
+                        for step in result["trace"]:
+                            st.text(step)
+                else:
+                    with st.spinner("Thinking..."):
+                        results = chatbot_core.retrieve(question, index, chunks, model)
+                        if not results:
+                            answer = "I couldn't find anything relevant to that in your documents."
+                            sources = ""
+                        else:
+                            context = chatbot_core.build_context(results)
+                            client = Anthropic(api_key=api_key_input)
+                            answer = ask_claude_with_history(
+                                client, question, context, st.session_state.chat_history
+                            )
+                            sources = ", ".join(
+                                sorted({f"{r['source']} (chunk {r['chunk_id']})" for r in results})
+                            )
+
+                        st.markdown(answer)
+                        if sources:
+                            st.caption(f"📄 Sources: {sources}")
 
             st.session_state.chat_history.append({"role": "assistant", "content": answer})
