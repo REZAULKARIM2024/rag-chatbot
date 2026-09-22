@@ -91,6 +91,35 @@ This opens a local web page where you can:
 Enter your Anthropic API key in the sidebar (or set `ANTHROPIC_API_KEY`
 as an environment variable beforehand and it will be pre-filled).
 
+## Agentic mode (LangGraph)
+
+Plain RAG trusts whatever the model generates from the retrieved context.
+Toggle **"🧠 Agentic mode"** in the Streamlit sidebar to switch to a
+[LangGraph](https://github.com/langchain-ai/langgraph)-based flow that adds
+a self-check step: after generating an answer, a second LLM call grades
+whether the answer is actually supported by the retrieved context. If it
+isn't, the graph retries retrieval once with a broadened query before
+falling back to an honest "I'm not confident" answer instead of a
+possible hallucination.
+
+```mermaid
+graph TD
+    A[retrieve] --> B[generate]
+    B --> C{grade groundedness}
+    C -->|grounded| D[END]
+    C -->|not grounded, retries left| E[reformulate query]
+    E --> A
+    C -->|retries exhausted| F[fallback answer with caveat]
+    F --> D
+```
+
+The UI shows a groundedness badge and an expandable **agent trace** for
+each answer, so you can see exactly which path the graph took — useful
+both for debugging and for demoing the reasoning process in interviews.
+This logic lives in `agent_graph.py` and reuses the same retrieval code
+as the plain chatbot (`chatbot.retrieve`, `chatbot.build_context`), so
+the two modes are directly comparable side by side.
+
 ## Project structure
 
 ```
@@ -100,11 +129,12 @@ rag-chatbot/
 ├── ingest.py           # builds the vector index from documents/
 ├── chatbot.py          # interactive CLI Q&A loop
 ├── streamlit_app.py    # browser-based UI with conversation memory
+├── agent_graph.py      # LangGraph agentic flow with groundedness self-check
 ├── requirements.txt
 └── README.md
 ```
 
-## What this demonstrates 
+## What this demonstrates (for interviews / resume)
 
 - Document chunking and preprocessing for LLM pipelines
 - Local embedding generation with `sentence-transformers`
@@ -112,6 +142,9 @@ rag-chatbot/
 - Prompt construction for grounded (anti-hallucination) generation
 - Multi-turn conversation design (chat history passed back to the model)
 - Both a clean CLI and a browser-based (Streamlit) application interface
+- Agentic orchestration with LangGraph: conditional routing, retry loops,
+  and a self-check (groundedness grading) step instead of blind trust in
+  a single LLM call
 
 ## Possible extensions
 
