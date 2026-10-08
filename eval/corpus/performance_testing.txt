@@ -1,0 +1,7 @@
+Performance Testing
+
+Load testing measures how a system behaves under the expected number of concurrent users, while stress testing pushes beyond that limit to find the breaking point and see how the system recovers. Soak testing runs a moderate load for many hours to expose memory leaks, and spike testing applies a sudden jump in traffic.
+
+Apache JMeter is a popular open-source tool for these tests. A test plan contains thread groups that simulate users, samplers that send requests, and listeners that collect results. Important metrics are response time percentiles such as p95, throughput in requests per second, and error rate. Averages hide slow outliers, so percentiles are more useful for judging user experience.
+
+Performance tests should run in an environment that matches production, use realistic data volumes, and start with a baseline so that a regression can be detected after each release. Results can be checked in the pipeline against a threshold, for example failing the build when p95 response time exceeds two seconds.

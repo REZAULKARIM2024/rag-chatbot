@@ -15,8 +15,8 @@ def report():
 
 
 def test_hit_rate_meets_threshold(report):
-    assert report["hit_rate"] >= 0.80
+    assert report["hit_rate"] >= 0.90
 
 
 def test_mrr_meets_threshold(report):
-    assert report["mrr"] >= 0.60
+    assert report["mrr"] >= 0.75

@@ -1,0 +1,12 @@
+.git
+.github
+venv
+__pycache__
+*.pyc
+output_index
+documents/*
+!documents/sample.txt
+tests
+eval
+.env
+profile_README.md

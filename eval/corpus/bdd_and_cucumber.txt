@@ -1,0 +1,7 @@
+Behavior-Driven Development
+
+Behavior-driven development describes features as examples written in plain language so that business analysts, developers and testers share one understanding. Scenarios use the Gherkin keywords Given, When and Then: Given sets up the context, When performs the action, and Then asserts the outcome. Background holds steps repeated by every scenario in a feature file, and Scenario Outline with an Examples table runs the same scenario with many data rows.
+
+Cucumber reads the feature files and matches each step to a step definition method in code. Tags such as @smoke and @regression select which scenarios to run. Good scenarios describe behaviour from the user's point of view and avoid implementation details like element locators, which belong in the page objects.
+
+Living documentation means the feature files stay accurate because they are executed on every build, so a requirement that changes without updating the scenario shows up as a failing test.

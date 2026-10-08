@@ -16,7 +16,7 @@ when you change chunk size, the embedding model or the retrieval logic.
 
 Usage:
     python eval/run_eval.py                 # default k=4
-    python eval/run_eval.py --k 3 --min-hit 0.8 --min-mrr 0.6
+    python eval/run_eval.py --k 3 --min-hit 0.9 --min-mrr 0.75
 """
 
 import argparse
@@ -54,8 +54,10 @@ def build_eval_index(model):
 def first_correct_rank(results, case):
     """1-based rank of the first chunk from the expected source containing the keyword, else None."""
     keyword = case["expected_keyword"].lower()
+    expected = case["expected_source"]
+    expected_sources = {expected} if isinstance(expected, str) else set(expected)
     for rank, r in enumerate(results, start=1):
-        if r["source"] == case["expected_source"] and keyword in r["text"].lower():
+        if r["source"] in expected_sources and keyword in r["text"].lower():
             return rank
     return None
 
@@ -66,24 +68,30 @@ def evaluate(k: int = 4):
     cases = json.loads(GOLDEN_PATH.read_text(encoding="utf-8"))
 
     rows, hits, rr_sum = [], 0, 0.0
+    by_cat = {}
     for case in cases:
         results = chatbot.retrieve(case["question"], index, chunks, model, k=k)
         rank = first_correct_rank(results, case)
+        cat = case.get("category", "easy")
+        stats = by_cat.setdefault(cat, {"n": 0, "hits": 0})
+        stats["n"] += 1
         if rank:
             hits += 1
+            stats["hits"] += 1
             rr_sum += 1.0 / rank
         rows.append((case["question"], rank))
 
     n = len(cases)
+    categories = {c: s["hits"] / s["n"] for c, s in by_cat.items()}
     return {"n": n, "k": k, "hit_rate": hits / n, "mrr": rr_sum / n, "rows": rows,
-            "chunks": len(chunks)}
+            "chunks": len(chunks), "categories": categories}
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--k", type=int, default=4)
-    parser.add_argument("--min-hit", type=float, default=0.80, help="fail if hit@k is below this")
-    parser.add_argument("--min-mrr", type=float, default=0.60, help="fail if MRR is below this")
+    parser.add_argument("--min-hit", type=float, default=0.90, help="fail if hit@k is below this")
+    parser.add_argument("--min-mrr", type=float, default=0.75, help="fail if MRR is below this")
     args = parser.parse_args()
 
     report = evaluate(args.k)
@@ -92,6 +100,8 @@ def main():
         status = f"rank {rank}" if rank else "MISS"
         print(f"  [{status:>7}] {question}")
     print(f"\nhit@{args.k}: {report['hit_rate']:.2%}   MRR: {report['mrr']:.3f}")
+    for cat, rate in sorted(report["categories"].items()):
+        print(f"  hit@{args.k} ({cat} questions): {rate:.2%}")
 
     if report["hit_rate"] < args.min_hit or report["mrr"] < args.min_mrr:
         print(f"\nFAIL: below thresholds (hit>={args.min_hit}, mrr>={args.min_mrr})")

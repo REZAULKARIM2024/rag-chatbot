@@ -202,6 +202,30 @@ rag-chatbot/
 - Add chunking strategies aware of document structure (headings, sections)
   instead of fixed-size sliding windows
 
+## Run with Docker
+
+```
+docker build -t rag-chatbot .
+docker run -p 8501:8501 rag-chatbot
+```
+
+Open http://localhost:8501 and paste your Anthropic API key in the sidebar.
+To use the pgvector backend, pass the connection string at run time instead of
+baking it into the image:
+
+```
+docker run -p 8501:8501 -e DATABASE_URL="postgresql://..." rag-chatbot
+```
+
+## Deploy on Streamlit Community Cloud
+
+1. Push this repo to GitHub (already done).
+2. Go to https://share.streamlit.io, choose **New app**, select this repo,
+   branch `main` and main file `streamlit_app.py`.
+3. Under **Advanced settings**, pick Python 3.12.
+4. Deploy. No secrets are required: each visitor enters their own Anthropic API
+   key in the sidebar, so the app never spends your credits.
+
 ## Testing & Evaluation
 
 Quality is checked automatically, with no Claude API calls and no cost:

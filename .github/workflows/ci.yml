@@ -32,4 +32,4 @@ jobs:
         run: pytest -v
 
       - name: Retrieval evaluation gate (hit@k / MRR)
-        run: python eval/run_eval.py --k 4 --min-hit 0.80 --min-mrr 0.60
+        run: python eval/run_eval.py --k 4 --min-hit 0.90 --min-mrr 0.75

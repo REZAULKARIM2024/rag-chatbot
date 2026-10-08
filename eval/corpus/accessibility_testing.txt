@@ -1,0 +1,7 @@
+Accessibility Testing
+
+Accessibility testing checks that people who use screen readers, keyboards only, or magnification can use an application. The Web Content Accessibility Guidelines, called WCAG, define the success criteria and are organised around four principles: perceivable, operable, understandable and robust.
+
+Automated tools such as axe-core scan a rendered page and report violations like missing alternative text on images, form fields without labels, and text with insufficient color contrast. These tools catch only a portion of the issues, so manual checks are still needed, such as navigating the whole page with the Tab key, confirming the focus indicator is visible, and listening to the page with a screen reader.
+
+Semantic HTML helps accessibility: using real button and heading elements gives assistive technology the information it needs, while ARIA attributes should only fill gaps that native elements cannot cover.

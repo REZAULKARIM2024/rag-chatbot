@@ -1,0 +1,7 @@
+Defect Management and Test Design
+
+A good bug report has a clear title, the environment and build version, numbered steps to reproduce, the expected result, the actual result and evidence such as a screenshot or log. Severity describes how badly the defect affects the system, while priority describes how soon it should be fixed, so a typo on the home page can be low severity but high priority.
+
+During triage the team confirms the defect, sets severity and priority, and assigns an owner. Root cause analysis asks why the defect was introduced and why it was not caught earlier, and the answer often leads to a new automated test or a code review rule.
+
+Equivalence partitioning splits input values into groups that should behave the same so that one value from each group is enough. Boundary value analysis tests the edges of those groups, for example the minimum, the maximum and one step either side. Decision tables list combinations of conditions and the expected outcome, which is useful for business rules with many rules interacting.

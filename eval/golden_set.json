@@ -1,14 +1,197 @@
 [
-  {"question": "What is the Page Object Model?", "expected_source": "test_automation.txt", "expected_keyword": "Page Object Model"},
-  {"question": "Which framework offers automatic waiting and cy.intercept network stubbing?", "expected_source": "test_automation.txt", "expected_keyword": "Cypress"},
-  {"question": "What causes flaky tests and how do you fix them?", "expected_source": "test_automation.txt", "expected_keyword": "Flaky tests"},
-  {"question": "What does the test pyramid recommend?", "expected_source": "test_automation.txt", "expected_keyword": "test pyramid"},
-  {"question": "Which status codes should an API test check for authentication failures?", "expected_source": "api_testing.txt", "expected_keyword": "401"},
-  {"question": "What is contract testing used for?", "expected_source": "api_testing.txt", "expected_keyword": "Pact"},
-  {"question": "Explain boundary value analysis.", "expected_source": "api_testing.txt", "expected_keyword": "Boundary value analysis"},
-  {"question": "What is the difference between load testing and stress testing?", "expected_source": "api_testing.txt", "expected_keyword": "stress testing"},
-  {"question": "Where are GitHub Actions workflows defined?", "expected_source": "ci_cd.txt", "expected_keyword": ".github/workflows"},
-  {"question": "What is shift-left testing?", "expected_source": "ci_cd.txt", "expected_keyword": "Shift-left"},
-  {"question": "What is a quality gate in a pipeline?", "expected_source": "ci_cd.txt", "expected_keyword": "quality gate"},
-  {"question": "Why use Docker for test environments?", "expected_source": "ci_cd.txt", "expected_keyword": "Docker"}
+  {
+    "question": "What is the Page Object Model?",
+    "expected_source": "test_automation.txt",
+    "expected_keyword": "Page Object Model",
+    "category": "easy"
+  },
+  {
+    "question": "Which framework offers automatic waiting and cy.intercept network stubbing?",
+    "expected_source": "test_automation.txt",
+    "expected_keyword": "Cypress",
+    "category": "easy"
+  },
+  {
+    "question": "What causes flaky tests and how do you fix them?",
+    "expected_source": "test_automation.txt",
+    "expected_keyword": "Flaky tests",
+    "category": "easy"
+  },
+  {
+    "question": "What does the test pyramid recommend?",
+    "expected_source": "test_automation.txt",
+    "expected_keyword": "test pyramid",
+    "category": "easy"
+  },
+  {
+    "question": "Which status codes should an API test check for authentication failures?",
+    "expected_source": "api_testing.txt",
+    "expected_keyword": "401",
+    "category": "easy"
+  },
+  {
+    "question": "What is contract testing used for?",
+    "expected_source": "api_testing.txt",
+    "expected_keyword": "Pact",
+    "category": "easy"
+  },
+  {
+    "question": "Explain boundary value analysis.",
+    "expected_source": "api_testing.txt",
+    "expected_keyword": "Boundary value analysis",
+    "category": "easy"
+  },
+  {
+    "question": "What is the difference between load testing and stress testing?",
+    "expected_source": "api_testing.txt",
+    "expected_keyword": "stress testing",
+    "category": "easy"
+  },
+  {
+    "question": "Where are GitHub Actions workflows defined?",
+    "expected_source": "ci_cd.txt",
+    "expected_keyword": ".github/workflows",
+    "category": "easy"
+  },
+  {
+    "question": "What is shift-left testing?",
+    "expected_source": "ci_cd.txt",
+    "expected_keyword": "Shift-left",
+    "category": "easy"
+  },
+  {
+    "question": "What is a quality gate in a pipeline?",
+    "expected_source": "ci_cd.txt",
+    "expected_keyword": "quality gate",
+    "category": "easy"
+  },
+  {
+    "question": "Why use Docker for test environments?",
+    "expected_source": "ci_cd.txt",
+    "expected_keyword": "Docker",
+    "category": "easy"
+  },
+  {
+    "question": "How can I make Android UI tests less brittle when permission pop-ups appear?",
+    "expected_source": "mobile_testing.txt",
+    "expected_keyword": "capabilities",
+    "category": "hard"
+  },
+  {
+    "question": "Which driver does Appium use to control an iOS device?",
+    "expected_source": "mobile_testing.txt",
+    "expected_keyword": "XCUITest",
+    "category": "hard"
+  },
+  {
+    "question": "Why do emulators not replace testing on physical phones?",
+    "expected_source": "mobile_testing.txt",
+    "expected_keyword": "battery",
+    "category": "hard"
+  },
+  {
+    "question": "How do I stop attackers from tampering with database queries through form inputs?",
+    "expected_source": "security_testing.txt",
+    "expected_keyword": "parameterized",
+    "category": "hard"
+  },
+  {
+    "question": "What should a tester verify about a login token that has been altered?",
+    "expected_source": "security_testing.txt",
+    "expected_keyword": "signature",
+    "category": "hard"
+  },
+  {
+    "question": "Which list should I use as a checklist of the most serious web application vulnerabilities?",
+    "expected_source": "security_testing.txt",
+    "expected_keyword": "OWASP",
+    "category": "hard"
+  },
+  {
+    "question": "Why are averages a poor way to judge response speed?",
+    "expected_source": "performance_testing.txt",
+    "expected_keyword": "percentiles",
+    "category": "hard"
+  },
+  {
+    "question": "Which kind of test would reveal a memory leak after many hours?",
+    "expected_source": "performance_testing.txt",
+    "expected_keyword": "Soak",
+    "category": "hard"
+  },
+  {
+    "question": "What are the building blocks of a JMeter test plan?",
+    "expected_source": "performance_testing.txt",
+    "expected_keyword": "thread groups",
+    "category": "hard"
+  },
+  {
+    "question": "How do I avoid repeating the same setup steps in every scenario of a feature file?",
+    "expected_source": "bdd_and_cucumber.txt",
+    "expected_keyword": "Background",
+    "category": "hard"
+  },
+  {
+    "question": "How can one scenario be run against many sets of input data?",
+    "expected_source": "bdd_and_cucumber.txt",
+    "expected_keyword": "Examples",
+    "category": "hard"
+  },
+  {
+    "question": "Why do feature files count as documentation that does not go stale?",
+    "expected_source": "bdd_and_cucumber.txt",
+    "expected_keyword": "Living documentation",
+    "category": "hard"
+  },
+  {
+    "question": "Can a bug be cosmetic yet still need an urgent fix?",
+    "expected_source": "defect_management.txt",
+    "expected_keyword": "priority",
+    "category": "hard"
+  },
+  {
+    "question": "Which technique tests the minimum and maximum allowed values?",
+    "expected_source": [
+      "defect_management.txt",
+      "api_testing.txt"
+    ],
+    "expected_keyword": "Boundary value analysis",
+    "category": "hard"
+  },
+  {
+    "question": "What information must a bug report include so a developer can reproduce it?",
+    "expected_source": "defect_management.txt",
+    "expected_keyword": "steps to reproduce",
+    "category": "hard"
+  },
+  {
+    "question": "Which automated library finds images missing alt text?",
+    "expected_source": "accessibility_testing.txt",
+    "expected_keyword": "axe-core",
+    "category": "hard"
+  },
+  {
+    "question": "Does an automated scan cover everything about usability for screen reader users?",
+    "expected_source": "accessibility_testing.txt",
+    "expected_keyword": "manual",
+    "category": "hard"
+  },
+  {
+    "question": "Which WCAG principles organise the success criteria?",
+    "expected_source": "accessibility_testing.txt",
+    "expected_keyword": "perceivable",
+    "category": "hard"
+  },
+  {
+    "question": "Where would I assert Content-Security-Policy in an automated suite?",
+    "expected_source": "security_testing.txt",
+    "expected_keyword": "security headers",
+    "category": "hard"
+  },
+  {
+    "question": "How do I keep CI fast by splitting emulator and device runs?",
+    "expected_source": "mobile_testing.txt",
+    "expected_keyword": "device farm",
+    "category": "hard"
+  }
 ]

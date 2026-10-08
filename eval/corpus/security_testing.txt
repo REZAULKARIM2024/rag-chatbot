@@ -1,0 +1,7 @@
+Security Testing Basics
+
+SQL injection happens when user input is concatenated into a database query. A tester tries payloads such as a single quote or OR 1=1 in form fields and API parameters, and the fix is to use parameterized queries so input is never executed as SQL.
+
+Cross-site scripting, known as XSS, lets an attacker run a script in another user's browser. Tests submit script tags into text fields and check that the output is encoded. Authentication tests cover brute-force protection, session expiry, and whether a JWT token with a tampered signature or an expired timestamp is rejected.
+
+Security headers such as Content-Security-Policy, X-Frame-Options and Strict-Transport-Security reduce the attack surface of a web application and are easy to assert in automated API tests. The OWASP Top 10 is a widely used list of the most critical web application risks and is a good checklist for planning test cases. Authorization testing checks that a normal user cannot reach another user's data by changing an identifier in the URL.

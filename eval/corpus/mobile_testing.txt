@@ -1,0 +1,7 @@
+Mobile Test Automation
+
+Appium is an open-source tool that automates native, hybrid and mobile web apps on Android and iOS using the WebDriver protocol. On Android it drives the device through the UiAutomator2 driver, and on iOS through XCUITest. Tests locate elements with accessibility ids, resource ids or XPath, and accessibility ids are preferred because they are stable and fast.
+
+Real devices catch problems that emulators miss, such as battery drain, camera behaviour, interrupting phone calls and vendor-specific rendering bugs. Emulators are cheaper and faster for early feedback, so teams usually run the smoke suite on emulators in CI and the full regression on a device farm.
+
+Mobile tests are slower and more fragile than web tests because of network conditions, gestures, permission dialogs and OS updates. Good practice is to reset the app state between tests, grant permissions through capabilities instead of tapping dialogs, and keep gestures such as swipe and long press in a shared helper class.
