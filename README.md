@@ -199,3 +199,25 @@ rag-chatbot/
   from a shareable link, not just localhost
 - Add chunking strategies aware of document structure (headings, sections)
   instead of fixed-size sliding windows
+
+## Testing & Evaluation
+
+Quality is checked automatically, with no Claude API calls and no cost:
+
+- **Unit tests (`tests/`)** - chunking edge cases and the LangGraph agent flow
+  (retry on ungrounded answers, fallback, no-context path) using fake LLM
+  and retriever objects, so they run offline in seconds.
+- **Retrieval evaluation (`eval/`)** - a golden set of questions with the
+  source file and keyword each answer must come from. `eval/run_eval.py`
+  builds an index from `eval/corpus/` with the real chunking and embedding
+  model, then reports **hit@k** and **MRR**. CI fails if the scores drop,
+  so a change to chunk size, the embedding model or retrieval logic can't
+  silently make search worse.
+- **CI (`.github/workflows/ci.yml`)** - runs both on every push and pull
+  request with GitHub Actions.
+
+```
+pip install -r requirements-dev.txt
+pytest -v
+python eval/run_eval.py --k 4
+```

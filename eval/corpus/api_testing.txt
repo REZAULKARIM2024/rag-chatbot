@@ -1,0 +1,9 @@
+API Testing Guide
+
+REST API testing verifies status codes, response bodies, headers and response times. Typical tools are Postman, REST Assured for Java, and the requests library with pytest for Python. A good API test checks the happy path, validation errors such as 400 Bad Request, authentication failures such as 401 Unauthorized and 403 Forbidden, and missing resources returning 404 Not Found.
+
+Contract testing, for example with Pact, ensures that a consumer and a provider agree on the shape of requests and responses so that services can be deployed independently without breaking each other.
+
+Boundary value analysis tests values at the edges of valid input ranges, such as the minimum, the maximum, and one step outside each. Equivalence partitioning divides inputs into classes that the system should treat the same, so one representative value per class is enough.
+
+Performance testing with JMeter or k6 measures throughput, latency percentiles such as p95 and p99, and error rate under load. Load testing applies expected traffic, while stress testing pushes beyond capacity to find the breaking point.

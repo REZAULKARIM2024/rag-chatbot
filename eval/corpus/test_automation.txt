@@ -1,0 +1,9 @@
+Test Automation Handbook
+
+The Page Object Model (POM) is a design pattern for UI test automation. Each page of the application is represented by a class that exposes the page's actions and hides its locators. When the UI changes, only the page class needs updating, which keeps tests maintainable and reduces duplication.
+
+Cypress is a JavaScript end-to-end testing framework that runs inside the browser. It offers automatic waiting, time-travel debugging, network stubbing with cy.intercept, and fast feedback. Selenium WebDriver is the older, language-agnostic alternative that controls browsers through a driver and supports Java, Python and C#.
+
+Flaky tests pass and fail intermittently without code changes. Common causes are hard-coded sleeps, shared test data, race conditions with asynchronous UI updates and unstable environments. Fixes include explicit waits on conditions, isolated test data created per test, and retrying only at the CI level while tracking the flake rate.
+
+The test pyramid recommends many fast unit tests, a moderate number of API and integration tests, and a small number of slow end-to-end UI tests. Inverting the pyramid leads to slow, brittle pipelines.

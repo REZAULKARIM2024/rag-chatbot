@@ -1,0 +1,14 @@
+[
+  {"question": "What is the Page Object Model?", "expected_source": "test_automation.txt", "expected_keyword": "Page Object Model"},
+  {"question": "Which framework offers automatic waiting and cy.intercept network stubbing?", "expected_source": "test_automation.txt", "expected_keyword": "Cypress"},
+  {"question": "What causes flaky tests and how do you fix them?", "expected_source": "test_automation.txt", "expected_keyword": "Flaky tests"},
+  {"question": "What does the test pyramid recommend?", "expected_source": "test_automation.txt", "expected_keyword": "test pyramid"},
+  {"question": "Which status codes should an API test check for authentication failures?", "expected_source": "api_testing.txt", "expected_keyword": "401"},
+  {"question": "What is contract testing used for?", "expected_source": "api_testing.txt", "expected_keyword": "Pact"},
+  {"question": "Explain boundary value analysis.", "expected_source": "api_testing.txt", "expected_keyword": "Boundary value analysis"},
+  {"question": "What is the difference between load testing and stress testing?", "expected_source": "api_testing.txt", "expected_keyword": "stress testing"},
+  {"question": "Where are GitHub Actions workflows defined?", "expected_source": "ci_cd.txt", "expected_keyword": ".github/workflows"},
+  {"question": "What is shift-left testing?", "expected_source": "ci_cd.txt", "expected_keyword": "Shift-left"},
+  {"question": "What is a quality gate in a pipeline?", "expected_source": "ci_cd.txt", "expected_keyword": "quality gate"},
+  {"question": "Why use Docker for test environments?", "expected_source": "ci_cd.txt", "expected_keyword": "Docker"}
+]
