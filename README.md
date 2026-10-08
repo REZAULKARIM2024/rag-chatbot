@@ -1,5 +1,7 @@
 # Personal RAG Chatbot
 
+[![CI](https://github.com/REZAULKARIM2024/rag-chatbot/actions/workflows/ci.yml/badge.svg)](https://github.com/REZAULKARIM2024/rag-chatbot/actions/workflows/ci.yml)
+
 A Retrieval-Augmented Generation (RAG) chatbot that answers questions about your own
 documents (resume, project notes, certificates, QA runbooks, etc.) using:
 
