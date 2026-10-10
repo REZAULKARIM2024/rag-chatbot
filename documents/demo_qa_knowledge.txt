@@ -1,0 +1,81 @@
+DEMO KNOWLEDGE BASE: QA and test automation notes
+
+This built-in document lets you try the chatbot without uploading anything. Ask about page objects, API testing, CI/CD, mobile, security, performance, BDD, defects or accessibility.
+
+Accessibility Testing
+
+Accessibility testing checks that people who use screen readers, keyboards only, or magnification can use an application. The Web Content Accessibility Guidelines, called WCAG, define the success criteria and are organised around four principles: perceivable, operable, understandable and robust.
+
+Automated tools such as axe-core scan a rendered page and report violations like missing alternative text on images, form fields without labels, and text with insufficient color contrast. These tools catch only a portion of the issues, so manual checks are still needed, such as navigating the whole page with the Tab key, confirming the focus indicator is visible, and listening to the page with a screen reader.
+
+Semantic HTML helps accessibility: using real button and heading elements gives assistive technology the information it needs, while ARIA attributes should only fill gaps that native elements cannot cover.
+
+API Testing Guide
+
+REST API testing verifies status codes, response bodies, headers and response times. Typical tools are Postman, REST Assured for Java, and the requests library with pytest for Python. A good API test checks the happy path, validation errors such as 400 Bad Request, authentication failures such as 401 Unauthorized and 403 Forbidden, and missing resources returning 404 Not Found.
+
+Contract testing, for example with Pact, ensures that a consumer and a provider agree on the shape of requests and responses so that services can be deployed independently without breaking each other.
+
+Boundary value analysis tests values at the edges of valid input ranges, such as the minimum, the maximum, and one step outside each. Equivalence partitioning divides inputs into classes that the system should treat the same, so one representative value per class is enough.
+
+Performance testing with JMeter or k6 measures throughput, latency percentiles such as p95 and p99, and error rate under load. Load testing applies expected traffic, while stress testing pushes beyond capacity to find the breaking point.
+
+Behavior-Driven Development
+
+Behavior-driven development describes features as examples written in plain language so that business analysts, developers and testers share one understanding. Scenarios use the Gherkin keywords Given, When and Then: Given sets up the context, When performs the action, and Then asserts the outcome. Background holds steps repeated by every scenario in a feature file, and Scenario Outline with an Examples table runs the same scenario with many data rows.
+
+Cucumber reads the feature files and matches each step to a step definition method in code. Tags such as @smoke and @regression select which scenarios to run. Good scenarios describe behaviour from the user's point of view and avoid implementation details like element locators, which belong in the page objects.
+
+Living documentation means the feature files stay accurate because they are executed on every build, so a requirement that changes without updating the scenario shows up as a failing test.
+
+CI/CD and Quality Gates
+
+Continuous integration runs the automated test suite on every pull request. GitHub Actions workflows are defined in YAML files under .github/workflows and can run unit tests, linting and security scans on each push. A failing required check blocks the merge.
+
+Shift-left testing moves testing earlier in the development lifecycle, for example reviewing requirements for testability and writing unit tests alongside code, because defects are cheaper to fix the earlier they are found.
+
+A quality gate is an automated pass or fail threshold in the pipeline, such as minimum code coverage, zero critical vulnerabilities, or a maximum number of failing smoke tests. Smoke tests are a short set of checks that confirm the build is stable enough for deeper testing, while regression tests confirm that existing behavior has not broken.
+
+Docker containers give test environments that are reproducible, so a test that passes on a developer laptop behaves the same way in the pipeline.
+
+Defect Management and Test Design
+
+A good bug report has a clear title, the environment and build version, numbered steps to reproduce, the expected result, the actual result and evidence such as a screenshot or log. Severity describes how badly the defect affects the system, while priority describes how soon it should be fixed, so a typo on the home page can be low severity but high priority.
+
+During triage the team confirms the defect, sets severity and priority, and assigns an owner. Root cause analysis asks why the defect was introduced and why it was not caught earlier, and the answer often leads to a new automated test or a code review rule.
+
+Equivalence partitioning splits input values into groups that should behave the same so that one value from each group is enough. Boundary value analysis tests the edges of those groups, for example the minimum, the maximum and one step either side. Decision tables list combinations of conditions and the expected outcome, which is useful for business rules with many rules interacting.
+
+Mobile Test Automation
+
+Appium is an open-source tool that automates native, hybrid and mobile web apps on Android and iOS using the WebDriver protocol. On Android it drives the device through the UiAutomator2 driver, and on iOS through XCUITest. Tests locate elements with accessibility ids, resource ids or XPath, and accessibility ids are preferred because they are stable and fast.
+
+Real devices catch problems that emulators miss, such as battery drain, camera behaviour, interrupting phone calls and vendor-specific rendering bugs. Emulators are cheaper and faster for early feedback, so teams usually run the smoke suite on emulators in CI and the full regression on a device farm.
+
+Mobile tests are slower and more fragile than web tests because of network conditions, gestures, permission dialogs and OS updates. Good practice is to reset the app state between tests, grant permissions through capabilities instead of tapping dialogs, and keep gestures such as swipe and long press in a shared helper class.
+
+Performance Testing
+
+Load testing measures how a system behaves under the expected number of concurrent users, while stress testing pushes beyond that limit to find the breaking point and see how the system recovers. Soak testing runs a moderate load for many hours to expose memory leaks, and spike testing applies a sudden jump in traffic.
+
+Apache JMeter is a popular open-source tool for these tests. A test plan contains thread groups that simulate users, samplers that send requests, and listeners that collect results. Important metrics are response time percentiles such as p95, throughput in requests per second, and error rate. Averages hide slow outliers, so percentiles are more useful for judging user experience.
+
+Performance tests should run in an environment that matches production, use realistic data volumes, and start with a baseline so that a regression can be detected after each release. Results can be checked in the pipeline against a threshold, for example failing the build when p95 response time exceeds two seconds.
+
+Security Testing Basics
+
+SQL injection happens when user input is concatenated into a database query. A tester tries payloads such as a single quote or OR 1=1 in form fields and API parameters, and the fix is to use parameterized queries so input is never executed as SQL.
+
+Cross-site scripting, known as XSS, lets an attacker run a script in another user's browser. Tests submit script tags into text fields and check that the output is encoded. Authentication tests cover brute-force protection, session expiry, and whether a JWT token with a tampered signature or an expired timestamp is rejected.
+
+Security headers such as Content-Security-Policy, X-Frame-Options and Strict-Transport-Security reduce the attack surface of a web application and are easy to assert in automated API tests. The OWASP Top 10 is a widely used list of the most critical web application risks and is a good checklist for planning test cases. Authorization testing checks that a normal user cannot reach another user's data by changing an identifier in the URL.
+
+Test Automation Handbook
+
+The Page Object Model (POM) is a design pattern for UI test automation. Each page of the application is represented by a class that exposes the page's actions and hides its locators. When the UI changes, only the page class needs updating, which keeps tests maintainable and reduces duplication.
+
+Cypress is a JavaScript end-to-end testing framework that runs inside the browser. It offers automatic waiting, time-travel debugging, network stubbing with cy.intercept, and fast feedback. Selenium WebDriver is the older, language-agnostic alternative that controls browsers through a driver and supports Java, Python and C#.
+
+Flaky tests pass and fail intermittently without code changes. Common causes are hard-coded sleeps, shared test data, race conditions with asynchronous UI updates and unstable environments. Fixes include explicit waits on conditions, isolated test data created per test, and retrying only at the CI level while tracking the flake rate.
+
+The test pyramid recommends many fast unit tests, a moderate number of API and integration tests, and a small number of slow end-to-end UI tests. Inverting the pyramid leads to slow, brittle pipelines.

@@ -58,7 +58,19 @@ def load_search_index():
         model = get_embedding_model_cached(model_name)
         return index, chunks, model
     except FileNotFoundError:
-        return None, None, None
+        pass
+
+    # First visit (e.g. a fresh cloud deployment): build the index from the
+    # bundled demo document so the app works immediately, with no setup.
+    if DOCS_DIR.exists() and any(p.suffix.lower() in (".pdf", ".txt") for p in DOCS_DIR.iterdir()):
+        with st.spinner("First visit: building the search index from the demo document (about a minute)..."):
+            ingest.build_index()
+        try:
+            index, chunks, model_name = chatbot_core.load_index()
+            return index, chunks, get_embedding_model_cached(model_name)
+        except FileNotFoundError:
+            pass
+    return None, None, None
 
 
 def ask_claude_with_history(client: Anthropic, question: str, context: str, history: list) -> str:
@@ -165,6 +177,8 @@ with st.sidebar:
         value=os.environ.get("ANTHROPIC_API_KEY", ""),
         help="Or set the ANTHROPIC_API_KEY environment variable instead.",
     )
+    if not api_key_input:
+        st.caption("No key? You can still try retrieval: questions will show the matching passages.")
 
     if st.button("🗑️ Clear conversation", use_container_width=True):
         st.session_state.chat_history = []
@@ -219,7 +233,25 @@ else:
 
     if question:
         if not api_key_input:
-            st.error("Please enter your Anthropic API key in the sidebar first.")
+            # Demo mode: show what the retriever finds, no LLM call, no cost.
+            with st.chat_message("user"):
+                st.markdown(question)
+            with st.chat_message("assistant"):
+                try:
+                    if backend == "Local (FAISS)":
+                        results = chatbot_core.retrieve(question, index, chunks, model)
+                    else:
+                        results = pg_store.retrieve_pg(question, model, database_url=database_url_input)
+                except Exception as e:
+                    st.error(f"Retrieval error: {e}")
+                    results = []
+                st.info(
+                    "Demo mode (no API key): showing the top retrieved passages. "
+                    "Add an Anthropic API key in the sidebar to get a written answer."
+                )
+                for r in results:
+                    with st.expander(f"{r['source']} · chunk {r['chunk_id']} · similarity {r['score']:.2f}"):
+                        st.write(r["text"])
         else:
             with st.chat_message("user"):
                 st.markdown(question)

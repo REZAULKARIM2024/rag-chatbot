@@ -5,3 +5,4 @@ output_index/
 .env
 documents/*
 !documents/sample.txt
+!documents/demo_qa_knowledge.txt

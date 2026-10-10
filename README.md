@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/REZAULKARIM2024/rag-chatbot/actions/workflows/ci.yml/badge.svg)](https://github.com/REZAULKARIM2024/rag-chatbot/actions/workflows/ci.yml)
 
+**Live demo:** https://rezaul-rag-chatbot.streamlit.app/ - works out of the box on a built-in QA knowledge base. Without an API key it shows the retrieved passages (no cost); paste your own Anthropic key in the sidebar for written answers.
+
 A Retrieval-Augmented Generation (RAG) chatbot that answers questions about your own
 documents (resume, project notes, certificates, QA runbooks, etc.) using:
 
