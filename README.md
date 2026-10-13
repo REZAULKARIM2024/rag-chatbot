@@ -249,3 +249,21 @@ pip install -r requirements-dev.txt
 pytest -v
 python eval/run_eval.py --k 4
 ```
+
+### Chunking experiment: fixed window vs sentence-aware
+
+Both strategies live in `ingest.py` (`CHUNKER = "fixed"` or `"sentence"`), and
+`python eval/run_eval.py --compare` scores them on the same 32-question golden set:
+
+| Metric (k=4)        | fixed (default) | sentence-aware |
+|---------------------|-----------------|----------------|
+| hit@4               | 100.00%         | 96.88%         |
+| MRR                 | 0.872           | 0.870          |
+| hit@4 (hard)        | 100.00%         | 95.00%         |
+
+Sentence-aware chunks never end mid-sentence (0 of 18, versus 9 of 18 for the
+fixed window), and it ranked 4 questions higher. But it ranked 4 lower and lost
+one hard question entirely (a Content-Security-Policy lookup), so **the fixed
+window stays the default**. The corpus is small (18 chunks), so treat the result
+as a measured comparison on this data, not a general claim. The harness exists so
+this kind of change is decided by numbers rather than intuition.
