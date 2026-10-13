@@ -42,6 +42,7 @@ from anthropic import Anthropic
 from langgraph.graph import StateGraph, END
 
 import chatbot as chatbot_core
+import usage as usage_tracker
 
 MAX_RETRIES = 1
 GRADER_MODEL = chatbot_core.CLAUDE_MODEL
@@ -56,6 +57,7 @@ class AgentState(TypedDict):
     grounded: bool
     retries: int
     trace: list[str]
+    usage: list[dict]
 
 
 def build_graph(index, chunks, embedding_model, api_key: str):
@@ -68,6 +70,11 @@ def build_graph(index, chunks, embedding_model, api_key: str):
 
     def retrieve_node(state: AgentState) -> AgentState:
         results = chatbot_core.retrieve(state["question"], index, chunks, embedding_model)
+        results, quarantined = chatbot_core.filter_results(results)
+        for q in quarantined:
+            state["trace"].append(
+                f"safety: quarantined {q['source']} (chunk {q['chunk_id']}) - flags: {', '.join(q['flags'])}"
+            )
         context = chatbot_core.build_context(results) if results else ""
         sources = ", ".join(
             sorted({f"{r['source']} (chunk {r['chunk_id']})" for r in results})
@@ -91,7 +98,8 @@ def build_graph(index, chunks, embedding_model, api_key: str):
 
 Question: {state['original_question']}"""
 
-        response = client.messages.create(
+        response = usage_tracker.call(
+            client, state["usage"], "generate",
             model=chatbot_core.CLAUDE_MODEL,
             max_tokens=600,
             system=chatbot_core.SYSTEM_PROMPT,
@@ -119,7 +127,8 @@ Answer given: {state['answer']}
 Is the answer FULLY supported by the context above, with no claims that go
 beyond what the context states? Reply with exactly one word: YES or NO."""
 
-        response = client.messages.create(
+        response = usage_tracker.call(
+            client, state["usage"], "grade",
             model=GRADER_MODEL,
             max_tokens=5,
             messages=[{"role": "user", "content": grading_prompt}],
@@ -185,6 +194,8 @@ def run_agentic_query(graph, question: str) -> dict:
         "grounded": False,
         "retries": 0,
         "trace": [],
+        "usage": [],
     }
     final_state = graph.invoke(initial_state)
+    final_state["usage_summary"] = usage_tracker.summarize(final_state["usage"])
     return final_state

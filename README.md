@@ -267,3 +267,35 @@ one hard question entirely (a Content-Security-Policy lookup), so **the fixed
 window stays the default**. The corpus is small (18 chunks), so treat the result
 as a measured comparison on this data, not a general claim. The harness exists so
 this kind of change is decided by numbers rather than intuition.
+
+## Security & cost: prompt injection, red-team eval, usage tracking
+
+Retrieved documents are **untrusted input**: anyone who can put text in the knowledge
+base can try to smuggle instructions to the model. Defence in depth, all testable offline:
+
+- **`safety.py`** - a heuristic detector for instruction-like text (override, prompt-leak,
+  role-hijack, fake `SYSTEM:` lines, exfiltration, concealment, tag breakout).
+  Flagged chunks are **quarantined** (never sent to the model, and logged in the agent trace).
+  The remaining text is wrapped in `<documents>` tags that a document cannot close early,
+  and the system prompt tells the model that everything inside is data, not instructions.
+- **`usage.py`** - every LLM call records tokens, latency and an estimated cost; the agent
+  returns `usage_summary` per question. Prices in `usage.PRICES` are illustrative - check the
+  current Anthropic pricing page before quoting dollar figures.
+- **`eval/run_redteam.py`** - scores the defences with no LLM and no cost:
+
+```
+python eval/run_redteam.py
+```
+
+| Check | Result |
+|---|---|
+| Attack detection (14 injection cases, 7 categories) | 14/14 |
+| False positives on benign look-alikes / every real corpus chunk | 0/6 and 0/36 |
+| Flagged chunks that reached the model context | 0 |
+| Can a document close the `<documents>` wrapper? | No |
+
+**Honest limits:** pattern matching only catches blunt attacks. Two documented known misses
+(a polite paraphrase and a French instruction) are NOT detected - they are listed in
+`eval/redteam_cases.json` so the gap stays visible. A document containing a literal
+`<documents>` tag is quarantined by design. The hardened system prompt is the second layer;
+measuring how a live model behaves against these cases would need API credits and is future work.

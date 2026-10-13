@@ -33,3 +33,6 @@ jobs:
 
       - name: Retrieval evaluation gate (hit@k / MRR)
         run: python eval/run_eval.py --k 4 --min-hit 0.90 --min-mrr 0.75
+
+      - name: Red-team gate (prompt-injection defences)
+        run: python eval/run_redteam.py --min-detect 0.90
