@@ -1,0 +1,220 @@
+[
+  {
+    "question": "How can I structure UI test code so that moving a button on screen does not force me to edit every test?",
+    "expected_source": "test_automation.txt",
+    "expected_keyword": "hides its locators",
+    "category": "paraphrase"
+  },
+  {
+    "question": "Why should I not insert a fixed delay before clicking when the interface refreshes asynchronously?",
+    "expected_source": "test_automation.txt",
+    "expected_keyword": "hard-coded sleeps",
+    "category": "paraphrase"
+  },
+  {
+    "question": "Which approach lets two services be released separately without breaking each other's messages?",
+    "expected_source": "api_testing.txt",
+    "expected_keyword": "consumer and a provider",
+    "category": "paraphrase"
+  },
+  {
+    "question": "How can a test environment behave identically on my laptop and in the automated pipeline?",
+    "expected_source": "ci_cd.txt",
+    "expected_keyword": "reproducible",
+    "category": "paraphrase"
+  },
+  {
+    "question": "At what point in the project timeline is it cheapest to catch a defect?",
+    "expected_source": "ci_cd.txt",
+    "expected_keyword": "cheaper to fix the earlier",
+    "category": "paraphrase"
+  },
+  {
+    "question": "What is the difference between how serious a defect is and how quickly it has to be repaired?",
+    "expected_source": "defect_management.txt",
+    "expected_keyword": "Severity describes",
+    "category": "paraphrase"
+  },
+  {
+    "question": "Which table-based technique helps when many business conditions interact?",
+    "expected_source": "defect_management.txt",
+    "expected_keyword": "Decision tables",
+    "category": "paraphrase"
+  },
+  {
+    "question": "How do I deal with an app asking for camera access during an automated phone run?",
+    "expected_source": "mobile_testing.txt",
+    "expected_keyword": "grant permissions through capabilities",
+    "category": "paraphrase"
+  },
+  {
+    "question": "Which locator style is quickest and least likely to break in phone automation?",
+    "expected_source": "mobile_testing.txt",
+    "expected_keyword": "accessibility ids are preferred",
+    "category": "paraphrase"
+  },
+  {
+    "question": "Which test checks how the system reacts to a rapid jump in visitors?",
+    "expected_source": "performance_testing.txt",
+    "expected_keyword": "spike testing",
+    "category": "paraphrase"
+  },
+  {
+    "question": "How can I detect that someone could view another customer's records by editing a number in the web address?",
+    "expected_source": "security_testing.txt",
+    "expected_keyword": "changing an identifier in the URL",
+    "category": "paraphrase"
+  },
+  {
+    "question": "What manual checks remain necessary for people who navigate without a mouse?",
+    "expected_source": "accessibility_testing.txt",
+    "expected_keyword": "Tab key",
+    "category": "paraphrase"
+  },
+  {
+    "question": "Is it better to use native HTML elements or extra attributes to help assistive technology?",
+    "expected_source": "accessibility_testing.txt",
+    "expected_keyword": "ARIA attributes should only fill gaps",
+    "category": "paraphrase"
+  },
+  {
+    "question": "Which labels decide which scenarios execute in a given run?",
+    "expected_source": "bdd_and_cucumber.txt",
+    "expected_keyword": "Tags such as @smoke",
+    "category": "paraphrase"
+  },
+  {
+    "question": "Compare boundary value analysis with equivalence partitioning, and say where decision tables fit in.",
+    "required": [
+      {
+        "source": "api_testing.txt",
+        "keyword": "Equivalence partitioning"
+      },
+      {
+        "source": "defect_management.txt",
+        "keyword": "Decision tables"
+      }
+    ],
+    "category": "multi-doc"
+  },
+  {
+    "question": "Which performance numbers should fail the pipeline, and what is a quality gate?",
+    "required": [
+      {
+        "source": "performance_testing.txt",
+        "keyword": "p95 response time exceeds two seconds"
+      },
+      {
+        "source": "ci_cd.txt",
+        "keyword": "A quality gate is an automated"
+      }
+    ],
+    "category": "multi-doc"
+  },
+  {
+    "question": "How should emulator and real-device suites be run in CI, and why use containers for the environment?",
+    "required": [
+      {
+        "source": "mobile_testing.txt",
+        "keyword": "smoke suite on emulators in CI"
+      },
+      {
+        "source": "ci_cd.txt",
+        "keyword": "Docker containers"
+      }
+    ],
+    "category": "multi-doc"
+  },
+  {
+    "question": "How do I test token-based login, and which status codes should the API return when it fails?",
+    "required": [
+      {
+        "source": "security_testing.txt",
+        "keyword": "tampered signature"
+      },
+      {
+        "source": "api_testing.txt",
+        "keyword": "401 Unauthorized"
+      }
+    ],
+    "category": "multi-doc"
+  },
+  {
+    "question": "How does living documentation in feature files connect to running tests on every build?",
+    "required": [
+      {
+        "source": "bdd_and_cucumber.txt",
+        "keyword": "executed on every build"
+      },
+      {
+        "source": "ci_cd.txt",
+        "keyword": "every pull request"
+      }
+    ],
+    "category": "multi-doc"
+  },
+  {
+    "question": "What do flaky tests and mobile tests have in common, and how do I stabilise them?",
+    "required": [
+      {
+        "source": "test_automation.txt",
+        "keyword": "Flaky tests"
+      },
+      {
+        "source": "mobile_testing.txt",
+        "keyword": "more fragile"
+      }
+    ],
+    "category": "multi-doc"
+  },
+  {
+    "question": "How do I configure horizontal pod autoscaling in Kubernetes?",
+    "unanswerable": true,
+    "category": "unanswerable"
+  },
+  {
+    "question": "What is mutation testing and how is a mutation score calculated?",
+    "unanswerable": true,
+    "category": "unanswerable"
+  },
+  {
+    "question": "How do I test smart contracts on Ethereum?",
+    "unanswerable": true,
+    "category": "unanswerable"
+  },
+  {
+    "question": "What is the capital of Australia?",
+    "unanswerable": true,
+    "category": "unanswerable"
+  },
+  {
+    "question": "Which Selenium Grid version supports Docker-based nodes?",
+    "unanswerable": true,
+    "category": "unanswerable"
+  },
+  {
+    "question": "How do I write a custom JMeter plugin in Java?",
+    "unanswerable": true,
+    "category": "unanswerable"
+  },
+  {
+    "question": "What is chaos engineering and how do I inject network failures?",
+    "unanswerable": true,
+    "category": "unanswerable"
+  },
+  {
+    "question": "How should I price a software subscription?",
+    "unanswerable": true,
+    "category": "unanswerable"
+  },
+  {
+    "question": "What are the steps to migrate a Jenkins pipeline to GitLab CI?",
+    "unanswerable": true,
+    "category": "unanswerable"
+  },
+  {
+    "question": "How do I test GraphQL subscriptions?",
+    "unanswerable": true,
+    "category": "unanswerable"
+  }
+]

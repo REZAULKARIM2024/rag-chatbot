@@ -268,6 +268,29 @@ window stays the default**. The corpus is small (18 chunks), so treat the result
 as a measured comparison on this data, not a general claim. The harness exists so
 this kind of change is decided by numbers rather than intuition.
 
+### Hard evaluation: paraphrase, multi-document and unanswerable questions
+
+Besides the 32-question gate above, `eval/golden_hard.json` holds 30 harder cases: 14 paraphrases that avoid the document's own wording, 6 questions that need two or more documents, and 10 questions the corpus cannot answer. Run it with `python eval/run_eval.py --set hard --explain` (report only, no CI gate).
+
+| Measure (k=4, fixed chunker, 18 chunks) | Result |
+|---|---|
+| hit@4, 20 answerable questions | 95.00% (19/20) |
+| MRR | 0.708 (base set: 0.872) |
+| Multi-document questions (all sources required) | 100% found, ranks 2-3 |
+| Paraphrase questions | 92.86% |
+
+**One miss, and why.** "At what point in the project timeline is it cheapest to catch a defect?" retrieved `defect_management.txt` (0.41) because of the shared word "defect". The answer sits in `ci_cd.txt` ("defects are cheaper to fix the earlier they are found"), which shares almost no vocabulary with the question. A small embedding model (all-MiniLM-L6-v2) struggles to bridge that concept gap.
+
+**Can a similarity cut-off make the bot say "I don't know"? Not reliably.** Top-1 similarity separates the 10 unanswerable questions from the 20 answerable ones only moderately (AUROC 0.785). Topics far from the corpus (Kubernetes, pricing, geography) score about 0.10, but related-yet-absent topics (a custom JMeter plugin, Selenium Grid versions, mutation testing) score 0.40-0.43, as high as real questions.
+
+| Cut-off | Real questions still answered | Unanswerable correctly refused |
+|---|---|---|
+| 0.10 | 100% | 10% |
+| 0.20 | 95% | 30% |
+| 0.30 | 75% | 50% |
+
+No cut-off gives a good trade-off, so none is set. Refusal is instead handled after generation by the agent's groundedness check, which is a different mechanism and is not measured by this offline retrieval eval. Caveats: 10 unanswerable questions is a small sample, and the corpus is tiny (9 files), so absolute numbers will not transfer to a larger corpus.
+
 ## Security & cost: prompt injection, red-team eval, usage tracking
 
 Retrieved documents are **untrusted input**: anyone who can put text in the knowledge
